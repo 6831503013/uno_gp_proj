@@ -18,7 +18,7 @@ public class Deck {
         // TODO: Create UNO cards
     }
 
-    private void shuffleDeck() {
+    public void shuffleDeck() {
         // TODO: Shuffle cards
     }
 
