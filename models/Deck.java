@@ -41,7 +41,7 @@ public class Deck {
         }
     }
 
-    private void shuffleDeck() {
+    public void shuffleDeck() {
         // TODO: Shuffle cards
     }
 
