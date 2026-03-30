@@ -73,19 +73,36 @@ public class GameController {
 
     private void initializeDiscardPile() {
         Card firstCard = safeDraw();
+
         while (firstCard != null && firstCard.getValue().equals("WildDraw4")) {
-            deck.addCard(firstCard);
-            deck.shuffleDeck();
-            firstCard = deck.drawCard();
+            deck.addCardToBottom(firstCard);
+            firstCard = safeDraw();
         }
+
         if (firstCard != null) {
-            discardPile.push(firstCard); // Only push once
+            discardPile.push(firstCard);
             currentColor = firstCard.getColor();
 
-            // Optional: Trigger special effect if the first card isn't a normal number
+            // Optional: trigger special effect if the first card isn't a normal number
             handleSpecialCard(firstCard);
         }
     }
+
+    // private void initializeDiscardPile() {
+    // Card firstCard = safeDraw();
+    // while (firstCard != null && firstCard.getValue().equals("WildDraw4")) {
+    // deck.addCard(firstCard);
+    // deck.shuffleDeck();
+    // firstCard = deck.drawCard();
+    // }
+    // if (firstCard != null) {
+    // discardPile.push(firstCard); // Only push once
+    // currentColor = firstCard.getColor();
+
+    // // Optional: Trigger special effect if the first card isn't a normal number
+    // handleSpecialCard(firstCard);
+    // }
+    // }
 
     private void gameLoop() {
         while (!checkWinner()) {
@@ -198,17 +215,52 @@ public class GameController {
     }
 
     // Add this helper to your GameController to handle empty decks safely
+    // private Card safeDraw() {
+    // Card drawn = deck.drawCard();
+    // if (drawn == null) {
+    // // Safety: If deck is empty, move discard pile (minus top card) back to deck
+    // Card top = discardPile.pop();
+    // // Assuming your teammate provides a way to add cards back
+    // // For now, we'll just log it so you know where it failed
+    // System.out.println("Deck empty! Reshuffling needed.");
+    // discardPile.push(top);
+    // return null; // Or trigger a reshuffle method if it exists
+    // }
+    // return drawn;
+    // }
+
     private Card safeDraw() {
         Card drawn = deck.drawCard();
+
         if (drawn == null) {
-            // Safety: If deck is empty, move discard pile (minus top card) back to deck
+            if (discardPile.size() <= 1) {
+                System.out.println("No cards left to reshuffle!");
+                return null;
+            }
+
+            // Keep the top card
             Card top = discardPile.pop();
-            // Assuming your teammate provides a way to add cards back
-            // For now, we'll just log it so you know where it failed
-            System.out.println("Deck empty! Reshuffling needed.");
+
+            // Move rest to deck
+            List<Card> temp = new ArrayList<>();
+            while (!discardPile.isEmpty()) {
+                temp.add(discardPile.pop());
+            }
+
+            // Shuffle and reload into deck
+            Collections.shuffle(temp);
+            for (Card c : temp) {
+                deck.addCardToBottom(c);
+            }
+
+            // Put top card back
             discardPile.push(top);
-            return null; // Or trigger a reshuffle method if it exists
+
+            System.out.println("Deck reshuffled!");
+
+            return deck.drawCard();
         }
+
         return drawn;
     }
 }
