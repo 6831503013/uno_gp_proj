@@ -18,10 +18,8 @@ public class Deck {
     }
 
     /**
-     * Creates a standard UNO deck:
-     * - 1 zero card per color
-     * - 2 of each number (1–9) per color
-     * - 2 of each action card (Skip, Reverse, Draw2) per color
+     * Creates a standard UNO deck: - 1 zero card per color - 2 of each number
+     * (1–9) per color - 2 of each action card (Skip, Reverse, Draw2) per color
      * - 4 Wild and 4 Wild Draw 4 cards
      */
     public void createDeck() {
@@ -69,13 +67,11 @@ public class Deck {
 
     // for (int i = cards.size() - 1; i > 0; i--) {
     // int j = rand.nextInt(i + 1);
-
     // Card temp = cards.get(i);
     // cards.set(i, cards.get(j));
     // cards.set(j, temp);
     // }
     // }
-
     public Card drawCard() {// Draws a card from the top of the draw pile
         if (drawPile.isEmpty()) {
             System.out.println("Deck is empty!");
@@ -90,8 +86,7 @@ public class Deck {
         }
     }
 
-    public void reloadFromDiscard(List<Card> discardedCards) {// Reloads the draw pile using cards from the discard
-                                                              // pile.
+    public void reloadFromDiscard(List<Card> discardedCards) {// Reloads the draw pile using cards from the discard pile.
         if (discardedCards == null || discardedCards.isEmpty()) {
             return;
         }
@@ -103,13 +98,14 @@ public class Deck {
     }
 
     public void printTopCards(int n) {// Debug method: prints top n cards without modifying the deck,useful for
-                                      // testing shuffle behavior
+        // testing shuffle behavior
         int count = 0;
         for (Card c : drawPile) {
             System.out.println(c);
             count++;
-            if (count >= n)
+            if (count >= n) {
                 break;
+            }
         }
     }
 

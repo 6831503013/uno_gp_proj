@@ -1,6 +1,7 @@
 package models;
 
 import java.util.*;
+import utils.DisplayHandler;
 
 public class Player {
 
@@ -14,15 +15,17 @@ public class Player {
 
     public void addCard(Card card) {
         // TODO
+        hand.add(card);
     }
 
     public void removeCard(int index) {
         // TODO
+        hand.remove(index);
     }
 
     public Card getCard(int index) {
         // TODO
-        return null;
+        return hand.get(index);
     }
 
     public int getHandSize() {
@@ -31,6 +34,12 @@ public class Player {
 
     public void showHand() {
         // TODO: Display cards
+        System.out.println(name + "'s hand:");
+        // for (int i = 0; i < hand.size(); i++) {
+        //     Card card = hand.get(i);
+        //     DisplayHandler.displayCard(i, card);
+        // }
+        DisplayHandler.displayHand(hand);
     }
 
     public String getName() {
@@ -45,24 +54,77 @@ public class Player {
         return hand;
     }
 
-    public Card playTurn(Card topCard) {
-        for (int i = 0; i < hand.size(); i++) {
-            Card candidate = hand.get(i);
-            if (candidate.getColor().equals(topCard.getColor()) ||
-                    candidate.getValue().equals(topCard.getValue()) ||
-                    candidate.getColor().equals("Wild")) {
+    // public Card playTurn(Card topCard) {
+    //     for (int i = 0; i < hand.size(); i++) {
+    //         Card candidate = hand.get(i);
+    //         if (candidate.getColor().equals(topCard.getColor())
+    //                 || candidate.getValue().equals(topCard.getValue())
+    //                 || candidate.getColor().equals("Wild")) {
+    //             return hand.remove(i); // Remove and return the card
+    //         }
+    //     }
+    //     return null; // No playable card
+    // }
+    public Move playTurn(Scanner scanner) {
 
-                return hand.remove(i); // Remove and return the card
-            }
+        System.out.println("Choose a card index to play OR type 'd' to draw:");
+
+        String input = scanner.nextLine();
+
+        // player chooses to draw
+        if (input.equalsIgnoreCase("d")) {
+            return new Move(Move.Type.DRAW, null);
         }
-        return null; // No playable card
+
+        // player chooses a card
+        try {
+            int index = Integer.parseInt(input);
+
+            if (index >= 0 && index < hand.size()) {
+                Card chosenCard = hand.get(index);
+                return new Move(Move.Type.PLAY, chosenCard);
+            }
+        } catch (NumberFormatException e) {
+            // Invalid input, will be handled below 
+            System.out.println("Error: " + e.getMessage());
+            scanner.nextLine();
+        }
+
+        // invalid input (input error)
+        System.out.println("Invalid input, try again.");
+        return playTurn(scanner); // retry input only
     }
 
     public String chooseColor() {
         /**
-         * "I need Player class to have a public String chooseColor() method that
-         * returns either 'Red', 'Blue', 'Green', or 'Yellow'."
+         * "I need Player class to have a public String chooseColor() method
+         * that returns either 'Red', 'Blue', 'Green', or 'Yellow'."
          */
-        return "";
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(name + ", please choose a color (R, B, G, Y): ");
+        String color = "";
+        while (color.isEmpty()) {
+            if (!scanner.hasNextLine()) {
+                scanner.close();
+                return "Red"; // Default color if no input
+            }
+            color = scanner.nextLine().trim();
+            color = switch (color.toLowerCase()) {
+                case "r" ->
+                    "Red";
+                case "b" ->
+                    "Blue";
+                case "g" ->
+                    "Green";
+                case "y" ->
+                    "Yellow";
+                default -> {
+                    System.out.println("Invalid color. Please enter R, B, G, or Y:");
+                    yield "";
+                }
+            };
+        }
+        scanner.close();
+        return color;
     }
 }
