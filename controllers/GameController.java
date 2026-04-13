@@ -1,6 +1,9 @@
 package controllers;
 
 import java.util.*;
+
+import exceptions.EmptyNameException;
+import exceptions.InvalidNameException;
 import models.*;
 import utils.DisplayHandler;
 
@@ -29,12 +32,42 @@ public class GameController {
         dealCards();
         initializeDiscardPile();
         Player winner = gameLoop();
-        //declareWinner(winner);
+        // declareWinner(winner);
+    }
+
+    public String getValidateName(Scanner sc) throws EmptyNameException, InvalidNameException {
+        System.out.print("Enter your name: ");
+        String name = sc.nextLine().trim();
+
+        // Check for empty name
+        if (name == null || name.trim().isEmpty()) {
+            throw new EmptyNameException("Name cannot be empty. Please enter a valid name.");
+        }
+
+        // Check for invalid characters (only letters and spaces allowed)
+        if (!name.matches("[a-zA-Z ]+")) {
+            throw new InvalidNameException(
+                    "Name contains invalid characters. Please enter a valid name with words(Aa-Zz).");
+        }
+
+        return name;
     }
 
     private void setupPlayers() {
+        // Ask the user for names and validate them
+        Scanner sc = new Scanner(System.in);
+        String playerName = "";
+        while (true) {
+            try {
+                playerName = getValidateName(sc);
+                break; // Exit loop if name is valid
+            } catch (EmptyNameException | InvalidNameException e) {
+                System.out.println("\033[91m" + e.getMessage() + "\033[0m");// Print error message in red
+            }
+        }
+
         // Just for the sake of the program
-        String[] names = {"Human", "CPU 1", "CPU 2"};
+        String[] names = { playerName, "CPU 1", "CPU 2" };
         for (String n : names) {
             // adding players to the game via Player constructor
             players.add(new Player(n));
@@ -50,7 +83,8 @@ public class GameController {
          * Shuffling before distribution is critical to ensure game randomness
          * and fairness
          */
-        // deck.shuffleDeck(); no need to shuffle here since the Deck constructor already shuffles
+        // deck.shuffleDeck(); no need to shuffle here since the Deck constructor
+        // already shuffles
 
         // We use a nested loop to implement "Round-Robin" dealing.
         // The outer loop represents the "round" (1st card, 2nd card, etc.)
@@ -63,8 +97,8 @@ public class GameController {
             for (Player player : players) {
 
                 /*
-         * * We use safeDraw() instead of deck.drawCard() to protect against
-         * NullPointerExceptions if the deck size is smaller than (players * 7).
+                 * * We use safeDraw() instead of deck.drawCard() to protect against
+                 * NullPointerExceptions if the deck size is smaller than (players * 7).
                  */
                 Card drawnCard = safeDraw();
                 if (drawnCard != null) {
@@ -106,28 +140,29 @@ public class GameController {
     // }
     // }
     // private void gameLoop() {
-    //   Player currentPlayer = players.get(currentPlayerIndex);
-    //   while (!GameRules.checkWinner(currentPlayer)) {
-    //     Card topCard = discardPile.peek();
-    //     Card chosenCard = currentPlayer.playTurn(topCard);
-    //     if (chosenCard != null && GameRules.isValidMove(chosenCard, topCard, currentColor)) {
-    //       System.out.println(currentPlayer.getName() + " played: " + chosenCard);
-    //       discardPile.push(chosenCard);
-    //       handleSpecialCard(chosenCard);
-    //     } else if (chosenCard != null) {
-    //       // Safety: If the player tried to play an illegal card,
-    //       // give it back to them and make them draw as a penalty.
-    //       currentPlayer.addCard(chosenCard);
-    //       currentPlayer.addCard(safeDraw());
-    //     } else {
-    //       System.out.println(currentPlayer.getName() + " had to draw.");
-    //       Card drawn = safeDraw();
-    //       if (drawn != null) {
-    //         currentPlayer.addCard(drawn);
-    //       }
-    //     }
-    //     nextTurn();
-    //   }
+    // Player currentPlayer = players.get(currentPlayerIndex);
+    // while (!GameRules.checkWinner(currentPlayer)) {
+    // Card topCard = discardPile.peek();
+    // Card chosenCard = currentPlayer.playTurn(topCard);
+    // if (chosenCard != null && GameRules.isValidMove(chosenCard, topCard,
+    // currentColor)) {
+    // System.out.println(currentPlayer.getName() + " played: " + chosenCard);
+    // discardPile.push(chosenCard);
+    // handleSpecialCard(chosenCard);
+    // } else if (chosenCard != null) {
+    // // Safety: If the player tried to play an illegal card,
+    // // give it back to them and make them draw as a penalty.
+    // currentPlayer.addCard(chosenCard);
+    // currentPlayer.addCard(safeDraw());
+    // } else {
+    // System.out.println(currentPlayer.getName() + " had to draw.");
+    // Card drawn = safeDraw();
+    // if (drawn != null) {
+    // currentPlayer.addCard(drawn);
+    // }
+    // }
+    // nextTurn();
+    // }
     // }
     private Player gameLoop() {
         while (true) {
@@ -179,7 +214,8 @@ public class GameController {
 
     private boolean isSpecialCard(Card card) {
         String value = card.getValue();
-        return value.equals("Skip") || value.equals("Reverse") || value.equals("Draw2") || value.equals("Wild") || value.equals("WildDraw4");
+        return value.equals("Skip") || value.equals("Reverse") || value.equals("Draw2") || value.equals("Wild")
+                || value.equals("WildDraw4");
     }
 
     public void skipNextPlayer() {
@@ -208,40 +244,40 @@ public class GameController {
     }
 
     // private void handleSpecialCard(Card card) {
-    //     // If it's a normal colored card, update the game's currentColor tracker
-    //     if (!card.getColor().equals("Wild")) {
-    //         this.currentColor = card.getColor();
-    //     }
-    //     // Delegate special card effects to the rules engine
-    //     GameRules.applySpecialCard(card, this, deck);
-    //     // String value = card.getValue();
-    //     // switch (value) {
-    //     // case "Reverse" -> {
-    //     // if (players.size() == 2) {
-    //     // nextTurn();
-    //     // } else {
-    //     // isClockWise = !isClockWise;
-    //     // }
-    //     // }
-    //     // case "Skip" -> nextTurn();
-    //     // case "Draw2" -> {
-    //     // nextTurn();
-    //     // Player victim = players.get(currentPlayerIndex);
-    //     // for (int i = 0; i < 2; i++) {
-    //     // victim.addCard(deck.drawCard());
-    //     // }
-    //     // }
-    //     // case "Wild" -> {
-    //     // currentColor = players.get(currentPlayerIndex).chooseColor();
-    //     // }
-    //     // case "WildDraw4" -> {
-    //     // nextTurn();
-    //     // currentColor = players.get(currentPlayerIndex).chooseColor();
-    //     // Player victim = players.get(currentPlayerIndex);
-    //     // for (int i = 0; i < 4; i++)
-    //     // victim.addCard(safeDraw());
-    //     // }
-    //     // }
+    // // If it's a normal colored card, update the game's currentColor tracker
+    // if (!card.getColor().equals("Wild")) {
+    // this.currentColor = card.getColor();
+    // }
+    // // Delegate special card effects to the rules engine
+    // GameRules.applySpecialCard(card, this, deck);
+    // // String value = card.getValue();
+    // // switch (value) {
+    // // case "Reverse" -> {
+    // // if (players.size() == 2) {
+    // // nextTurn();
+    // // } else {
+    // // isClockWise = !isClockWise;
+    // // }
+    // // }
+    // // case "Skip" -> nextTurn();
+    // // case "Draw2" -> {
+    // // nextTurn();
+    // // Player victim = players.get(currentPlayerIndex);
+    // // for (int i = 0; i < 2; i++) {
+    // // victim.addCard(deck.drawCard());
+    // // }
+    // // }
+    // // case "Wild" -> {
+    // // currentColor = players.get(currentPlayerIndex).chooseColor();
+    // // }
+    // // case "WildDraw4" -> {
+    // // nextTurn();
+    // // currentColor = players.get(currentPlayerIndex).chooseColor();
+    // // Player victim = players.get(currentPlayerIndex);
+    // // for (int i = 0; i < 4; i++)
+    // // victim.addCard(safeDraw());
+    // // }
+    // // }
     // }
     private void nextTurn() {
         // TODO
@@ -250,14 +286,14 @@ public class GameController {
     }
 
     // private boolean checkWinner() {
-    //     // TODO
-    //     for (Player p : players) {
-    //         if (p.getHand().isEmpty()) {
-    //             System.out.println(p.getName() + " has won the game!");
-    //             return true;
-    //         }
-    //     }
-    //     return false;
+    // // TODO
+    // for (Player p : players) {
+    // if (p.getHand().isEmpty()) {
+    // System.out.println(p.getName() + " has won the game!");
+    // return true;
+    // }
+    // }
+    // return false;
     // }
     // Add this helper to your GameController to handle empty decks safely
     // private Card safeDraw() {
