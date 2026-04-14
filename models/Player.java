@@ -36,8 +36,8 @@ public class Player {
         // TODO: Display cards
         System.out.println(name + "'s hand:");
         // for (int i = 0; i < hand.size(); i++) {
-        //     Card card = hand.get(i);
-        //     DisplayHandler.displayCard(i, card);
+        // Card card = hand.get(i);
+        // DisplayHandler.displayCard(i, card);
         // }
         DisplayHandler.displayHand(hand);
     }
@@ -55,15 +55,15 @@ public class Player {
     }
 
     // public Card playTurn(Card topCard) {
-    //     for (int i = 0; i < hand.size(); i++) {
-    //         Card candidate = hand.get(i);
-    //         if (candidate.getColor().equals(topCard.getColor())
-    //                 || candidate.getValue().equals(topCard.getValue())
-    //                 || candidate.getColor().equals("Wild")) {
-    //             return hand.remove(i); // Remove and return the card
-    //         }
-    //     }
-    //     return null; // No playable card
+    // for (int i = 0; i < hand.size(); i++) {
+    // Card candidate = hand.get(i);
+    // if (candidate.getColor().equals(topCard.getColor())
+    // || candidate.getValue().equals(topCard.getValue())
+    // || candidate.getColor().equals("Wild")) {
+    // return hand.remove(i); // Remove and return the card
+    // }
+    // }
+    // return null; // No playable card
     // }
     public Move playTurn(Scanner scanner) {
 
@@ -85,7 +85,7 @@ public class Player {
                 return new Move(Move.Type.PLAY, chosenCard);
             }
         } catch (NumberFormatException e) {
-            // Invalid input, will be handled below 
+            // Invalid input, will be handled below
             System.out.println("Error: " + e.getMessage());
             scanner.nextLine();
         }

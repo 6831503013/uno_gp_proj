@@ -1,9 +1,8 @@
 package controllers;
 
-import java.util.*;
-
 import exceptions.EmptyNameException;
 import exceptions.InvalidNameException;
+import java.util.*;
 import models.*;
 import utils.DisplayHandler;
 
@@ -11,7 +10,8 @@ public class GameController {
 
     private Deck deck;
     private List<Player> players;
-    private Stack<Card> discardPile;
+    private GamePile<Card> discardPile;
+
     private int currentPlayerIndex;
     private boolean isClockWise = true;
     private String currentColor;
@@ -22,7 +22,8 @@ public class GameController {
     public GameController() {
         deck = new Deck();
         players = new ArrayList<>();
-        discardPile = new Stack<>();
+        // custome generic class (Parametric Polymorphism)
+        discardPile = new GamePile<>();
         currentPlayerIndex = 0;
 
     }
@@ -318,29 +319,18 @@ public class GameController {
                 return null;
             }
 
-            // Keep the top card
-            Card top = discardPile.pop();
+            System.out.println("Deck empty! Reshuffling discard pile...");
 
-            // Move rest to deck
-            List<Card> temp = new ArrayList<>();
-            while (!discardPile.isEmpty()) {
-                temp.add(discardPile.pop());
-            }
+            // Use the generic class to handle the extraction
+            List<Card> oldCards = discardPile.clearExceptTop();
 
-            // Shuffle and reload into deck
-            Collections.shuffle(temp);
-            for (Card c : temp) {
+            Collections.shuffle(oldCards);
+            for (Card c : oldCards) {
                 deck.addCardToBottom(c);
             }
 
-            // Put top card back
-            discardPile.push(top);
-
-            System.out.println("Deck reshuffled!");
-
             return deck.drawCard();
         }
-
         return drawn;
     }
 }
