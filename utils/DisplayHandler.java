@@ -6,6 +6,14 @@ import models.Card;
 
 public class DisplayHandler {
 
+    public static void displayPlayerTurn(String playerName) {
+        System.out.println("It's " + playerName + "'s turn!");
+    }
+
+    public static void declareWinner(String playerName) {
+        System.out.println("Congratulations " + playerName + "! You win!");
+    }
+
     public static void displayCard(int index, Card card) {
         System.out.println(index + ": " + card.getColor() + " " + card.getValue());
     }

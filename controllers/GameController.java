@@ -4,7 +4,7 @@ import exceptions.EmptyNameException;
 import exceptions.InvalidNameException;
 import java.util.*;
 import models.*;
-import utils.DisplayHandler;
+import utils.*;
 
 public class GameController {
 
@@ -17,7 +17,6 @@ public class GameController {
     private String currentColor;
     private final int CardsPerPlayer = 7;
     private Scanner scanner = new Scanner(System.in);
-    // private boolean gameOver = false;
 
     public GameController() {
         deck = new Deck();
@@ -33,34 +32,30 @@ public class GameController {
         dealCards();
         initializeDiscardPile();
         Player winner = gameLoop();
-        // declareWinner(winner);
+        DisplayHandler.declareWinner(winner.getName());
     }
 
-    public String getValidateName(Scanner sc) throws EmptyNameException, InvalidNameException {
-        System.out.print("Enter your name: ");
-        String name = sc.nextLine().trim();
-
-        // Check for empty name
-        if (name == null || name.trim().isEmpty()) {
-            throw new EmptyNameException("Name cannot be empty. Please enter a valid name.");
-        }
-
-        // Check for invalid characters (only letters and spaces allowed)
-        if (!name.matches("[a-zA-Z ]+")) {
-            throw new InvalidNameException(
-                    "Name contains invalid characters. Please enter a valid name with words(Aa-Zz).");
-        }
-
-        return name;
-    }
-
+    // public String getValidateName(Scanner sc) throws EmptyNameException, InvalidNameException {
+    //     System.out.print("Enter your name: ");
+    //     String name = sc.nextLine().trim();
+    //     // Check for empty name
+    //     if (name == null || name.trim().isEmpty()) {
+    //         throw new EmptyNameException("Name cannot be empty. Please enter a valid name.");
+    //     }
+    //     // Check for invalid characters (only letters and spaces allowed)
+    //     if (!name.matches("[a-zA-Z ]+")) {
+    //         throw new InvalidNameException(
+    //                 "Name contains invalid characters. Please enter a valid name with words(Aa-Zz).");
+    //     }
+    //     return name;
+    // }
     private void setupPlayers() {
         // Ask the user for names and validate them
         Scanner sc = new Scanner(System.in);
         String playerName = "";
         while (true) {
             try {
-                playerName = getValidateName(sc);
+                playerName = InputHandler.getValidateName(sc);
                 break; // Exit loop if name is valid
             } catch (EmptyNameException | InvalidNameException e) {
                 System.out.println("\033[91m" + e.getMessage() + "\033[0m");// Print error message in red
@@ -68,7 +63,7 @@ public class GameController {
         }
 
         // Just for the sake of the program
-        String[] names = { playerName, "CPU 1", "CPU 2" };
+        String[] names = {playerName, "CPU 1", "CPU 2"};
         for (String n : names) {
             // adding players to the game via Player constructor
             players.add(new Player(n));
