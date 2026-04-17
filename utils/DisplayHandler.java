@@ -27,33 +27,41 @@ public class DisplayHandler {
 
     // Get ANSI color from card color
     private static String getColorCode(String color) {
-        switch (color.toUpperCase()) {
-            case "RED":
-                return RED;
-            case "BLUE":
-                return BLUE;
-            case "GREEN":
-                return GREEN;
-            case "YELLOW":
-                return YELLOW;
-            default:
-                return RESET;
-        }
+        return switch (color.toUpperCase()) {
+            case "RED" -> RED;
+            case "BLUE" -> BLUE;
+            case "GREEN" -> GREEN;
+            case "YELLOW" -> YELLOW;
+            default -> RESET;
+        };
     }
 
     // Render SINGLE card
     public static List<String> renderCard(Card card) {
         List<String> lines = new ArrayList<>();
-
         String colorCode = getColorCode(card.getColor());
         String value = card.getValue();
 
-        String border = colorCode + ".-------." + RESET;
+        int totalWidth = 9; // The inner width of the card
 
+        // 1. Calculate padding for centering
+        int totalPadding = totalWidth - value.length();
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+
+        // 2. Build the strings
+        String border = colorCode + "." + "-".repeat(totalWidth) + "." + RESET;
+        String emptyLine = colorCode + "|" + " ".repeat(totalWidth) + "|" + RESET;
+
+        // Create the centered text line
+        String centeredValue = " ".repeat(leftPadding) + value + " ".repeat(rightPadding);
+        String contentLine = colorCode + "|" + centeredValue + "|" + RESET;
+
+        // 3. Assemble the card
         lines.add(border);
-        lines.add(colorCode + "|       |" + RESET);
-        lines.add(colorCode + String.format("|   %-3s |", value) + RESET);
-        lines.add(colorCode + "|       |" + RESET);
+        lines.add(emptyLine);
+        lines.add(contentLine);
+        lines.add(emptyLine);
         lines.add(border);
 
         return lines;
