@@ -21,7 +21,7 @@ public class DisplayHandler {
     // ANSI color codes
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
-    private static final String BLUE = "\u001B[34m";
+    private static final String BLUE = "\u001B[96m";
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
 
@@ -102,6 +102,7 @@ public class DisplayHandler {
     }
 
     public static void displayWinner(String playerName) {
+        System.out.println();
         System.out.println("Congratulations " + playerName + "! You win!");
     }
 
@@ -128,6 +129,7 @@ public class DisplayHandler {
 
         String[] lines = skipArt.split("\n");
 
+        System.out.println();
         for (String line : lines) {
             System.out.println(RED + line + RESET);
             try {
@@ -156,6 +158,7 @@ public class DisplayHandler {
 
         String[] lines = reverseArt.split("\\n");
 
+        System.out.println();
         for (String line : lines) {
             System.out.println(BLUE + line + RESET);
             try {
@@ -184,6 +187,7 @@ public class DisplayHandler {
 
         String[] lines = draw2Art.split("\\n");
 
+        System.out.println();
         for (String line : lines) {
             System.out.println(YELLOW + line + RESET);
             try {
@@ -216,6 +220,7 @@ public class DisplayHandler {
 
         String[] lines = wildArt.split("\\n");
 
+        System.out.println();
         for (String line : lines) {
 
             // Apply cyan to entire line first
@@ -269,6 +274,7 @@ public class DisplayHandler {
 
         String[] lines = wild4Art.split("\\n");
 
+        System.out.println();
         for (String line : lines) {
 
             // Step 1: apply red base

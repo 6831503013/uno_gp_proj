@@ -168,13 +168,14 @@ public class GameController {
             Player currentPlayer = players.get(currentPlayerIndex);
             Card topCard = discardPile.peek();
 
-            // show top card and player hand
-            DisplayHandler.renderTopCard(topCard);
-            DisplayHandler.displayHand(currentPlayer.getHand());
             // Handle special card's effects before the player can move
             if (isSpecialCard(topCard)) {
                 GameRules.applySpecialCard(topCard, this, deck);
             }
+
+            // show top card and player hand
+            DisplayHandler.renderTopCard(topCard);
+            DisplayHandler.displayHand(currentPlayer.getHand());
 
             // Ask the player for their move until they make a valid one
             while (true) {

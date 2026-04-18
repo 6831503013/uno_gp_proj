@@ -87,7 +87,7 @@ public class Player {
         String color = "";
         while (color.isEmpty()) {
             if (!scanner.hasNextLine()) {
-                scanner.close();
+                // scanner.close();
                 return "Red"; // Default color if no input
             }
             color = scanner.nextLine().trim();
@@ -106,7 +106,7 @@ public class Player {
                 }
             };
         }
-        scanner.close();
+        // scanner.close();
         return color;
     }
 }
