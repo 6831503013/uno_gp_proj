@@ -11,7 +11,82 @@ public class DisplayHandler {
     }
 
     public static void declareWinner(String playerName) {
-        System.out.println("Congratulations " + playerName + "! You win!");
+        String GOLD = "\033[93m";
+        String RED = "\033[31m";
+        String WHITE = "\033[97m";
+        String RESET = "\033[0m";
+
+        // Your original unoArt
+        String unoArt = """
+                ██╗   ██╗███╗   ██╗ ██████╗ ██╗
+                ██║   ██║████╗  ██║██╔═══██╗██║
+                ██║   ██║██╔██╗ ██║██║   ██║██║
+                ██║   ██║██║╚██╗██║██║   ██║╚═╝
+                ╚██████╔╝██║ ╚████║╚██████╔╝██╗
+                 ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝""";
+
+        // 1. The Slam: Display UNO! line by line
+        System.out.println(RED);
+        for (String line : unoArt.split("\n")) {
+            System.out.println(line);
+            pause(80);
+        }
+        pause(400);
+
+        // 2. The Firework Burst: Creating a visual explosion effect
+        System.out.println("\n");
+        String[] burst = {
+                "       .        ",
+                "    .  |  .     ",
+                "  '  - O -  '   ",
+                "    '  |  '     ",
+                "       '        "
+        };
+
+        for (String line : burst) {
+            System.out.println(GOLD + "          " + line);
+            pause(100);
+        }
+
+        // 3. The Reveal: "Typewrite" the victory declaration
+        String winnerBox = " ★★★ " + playerName.toUpperCase() + " WINS THE GAME! ★★★ ";
+
+        System.out.print("\n" + WHITE);
+        // Draw top line of the banner
+        System.out.println("  " + "═".repeat(winnerBox.length()));
+
+        // Type the winner name centered
+        System.out.print("  ");
+        typewrite(winnerBox, 60);
+        System.out.println();
+
+        // Draw bottom line
+        System.out.println(WHITE + "  " + "═".repeat(winnerBox.length()));
+
+        // 4. Final Polish: A little shimmering star at the end
+        for (int i = 0; i < 4; i++) {
+            String star = (i % 2 == 0) ? "✨" : "  ";
+            System.out.print("\r  " + star + "  GLORY TO THE CHAMPION  " + star);
+            pause(400);
+        }
+
+        System.out.println("\n" + RESET);
+    }
+
+    private static void pause(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private static void typewrite(String text, int speed) {
+        for (char c : text.toCharArray()) {
+            System.out.print(c);
+            System.out.flush();
+            pause(speed);
+        }
     }
 
     public static void displayCard(int index, Card card) {
@@ -87,39 +162,49 @@ public class DisplayHandler {
             System.out.println("No cards.");
             return;
         }
+        int cardsPerRow = 8; // Change this number to fit your terminal width
+        int totalCards = hand.size();
 
-        // System.out.println("Your hand:");
-        List<List<String>> renderedCards = new ArrayList<>();
+        for (int rowStart = 0; rowStart < totalCards; rowStart += cardsPerRow) {
+            int rowEnd = Math.min(rowStart + cardsPerRow, totalCards);
+            List<Card> currentRow = hand.subList(rowStart, rowEnd);
 
-        for (Card card : hand) {
-            renderedCards.add(renderCard(card));
-        }
-
-        int height = renderedCards.get(0).size();
-
-        for (int i = 0; i < height; i++) {
-            for (List<String> cardLines : renderedCards) {
-                System.out.print(cardLines.get(i) + "  ");
+            // 1. Render only the cards for this specific row
+            List<List<String>> renderedCards = new ArrayList<>();
+            for (Card card : currentRow) {
+                renderedCards.add(renderCard(card));
             }
-            System.out.println();
-        }
 
-        // Display card indices (1-based)
-        for (int i = 0; i < hand.size(); i++) {
-            String index = String.valueOf(i + 1);
-            int cardWidth = 11; // width of card with borders
-            int totalPadding = cardWidth - index.length();
-            int leftPadding = totalPadding / 2;
-            int rightPadding = totalPadding - leftPadding;
-            String indexLine = " ".repeat(leftPadding) + index + " ".repeat(rightPadding);
-            System.out.print(indexLine + "  ");
+            int height = renderedCards.get(0).size();
+            String cardGap = "  ";
+
+            // 2. Print the visual cards for this row
+            for (int i = 0; i < height; i++) {
+                for (List<String> cardLines : renderedCards) {
+                    System.out.print(cardLines.get(i) + cardGap);
+                }
+                System.out.println();
+            }
+
+            // 3. Print the indices for this row (Corrected for 2+ digits)
+            int cardVisualWidth = 11;
+            for (int i = rowStart; i < rowEnd; i++) {
+                String index = String.valueOf(i + 1);
+                int totalPadding = cardVisualWidth - index.length();
+                int leftPadding = totalPadding / 2;
+                int rightPadding = totalPadding - leftPadding;
+
+                String indexLine = " ".repeat(leftPadding) + index + " ".repeat(rightPadding);
+                System.out.print(indexLine + cardGap);
+            }
+
+            // Add extra spacing between rows of cards
+            System.out.println("\n");
         }
-        System.out.println();
     }
 
     public static void displayWinner(String playerName) {
-        System.out.println();
-        System.out.println("Congratulations " + playerName + "! You win!");
+
     }
 
     // Display functions for wild cards and special cards can be added here as
@@ -157,7 +242,7 @@ public class DisplayHandler {
     }
 
     public static void displayReverseCard() {
-        String BLUE = "\033[94m"; // bright blue
+        String BLUE = "\033[96m"; // bright blue
         String RESET = "\033[0m";
 
         String reverseArt = """
@@ -218,7 +303,7 @@ public class DisplayHandler {
         String CYAN = "\033[96m";
         String RED = "\033[91m";
         String YELLOW = "\033[93m";
-        String BLUE = "\033[34m";
+        String BLUE = "\033[96m";
         String GREEN = "\033[92m";
         String RESET = "\033[0m";
 
@@ -264,7 +349,7 @@ public class DisplayHandler {
         String PURPLE = "\033[95m";
         String RED = "\033[91m";
         String YELLOW = "\033[93m";
-        String BLUE = "\033[94m";
+        String BLUE = "\033[96m";
         String GREEN = "\033[92m";
         String RESET = "\033[0m";
 
